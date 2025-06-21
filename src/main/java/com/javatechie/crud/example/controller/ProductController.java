@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import org.springframework.web.bind.annotation.GetMapping;
+
 
 @RestController
 public class ProductController {
@@ -47,4 +49,5 @@ public class ProductController {
     public String deleteProduct(@PathVariable int id) {
         return service.deleteProduct(id);
     }
+
 }
