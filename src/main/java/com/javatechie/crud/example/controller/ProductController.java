@@ -3,10 +3,11 @@ package com.javatechie.crud.example.controller;
 import com.javatechie.crud.example.entity.Product;
 import com.javatechie.crud.example.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import org.springframework.web.bind.annotation.GetMapping;
+
 
 
 @RestController
@@ -48,6 +49,42 @@ public class ProductController {
     @DeleteMapping("/delete/{id}")
     public String deleteProduct(@PathVariable int id) {
         return service.deleteProduct(id);
+    }    //endpoint with versions
+
+    //version 1.0.0
+    @GetMapping("/api/v1/health")
+    public ResponseEntity<?> healthV1() {
+        return ResponseEntity.ok().body("v1 Health : GOOD");
     }
 
+    @GetMapping("/api/v1/products")
+    public List<Product> findAllProductsV1() {
+        return service.getProducts();
+    }
+
+    //version 1.1.0
+    @GetMapping("/api/v1.1/health")
+    public ResponseEntity<?> healthV1_1() {
+        return ResponseEntity.ok().body("v1.1 Health : GOOD");
+    }
+
+    @GetMapping("/api/v1.1/products")
+    public List<Product> findAllProductsV1_1() {
+        return service.getProducts();
+    }
+
+    @GetMapping("/api/v1.1/products/search")
+    public ResponseEntity<?> searchV1_1(@RequestParam String keyword) {
+        try {
+            Product product = service.getProductByName(keyword);
+            if (product != null) {
+                return ResponseEntity.ok().body(product);
+            } else {
+                return ResponseEntity.status(404).body("Product not found");
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Error occurred: " + e.getMessage());
+        }
+    }
+    
 }

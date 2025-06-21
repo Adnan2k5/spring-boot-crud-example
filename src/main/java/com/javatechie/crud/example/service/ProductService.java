@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ProductService {
@@ -43,7 +44,18 @@ public class ProductService {
         existingProduct.setQuantity(product.getQuantity());
         existingProduct.setPrice(product.getPrice());
         return repository.save(existingProduct);
+    }  
+    
+    //Product search with min & max price (for api v2)
+    public List<Product> enhancedProductSearch(String name, Double minPrice, Double maxPrice) {
+        return repository.findAll().stream()
+            .filter(product -> {
+                boolean matchesName = name == null || 
+                    product.getName().toLowerCase().contains(name.toLowerCase());
+                    boolean matchesMinPrice = minPrice == null || product.getPrice() >= minPrice;
+                    boolean matchesMaxPrice = maxPrice == null || product.getPrice() <= maxPrice;
+                    return matchesName && matchesMinPrice && matchesMaxPrice;
+                })
+        .collect(Collectors.toList());
     }
-
-
 }
